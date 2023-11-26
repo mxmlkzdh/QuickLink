@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,10 @@ import com.mlkzdh.quicklink.util.Base62;
 public final class UrlController {
 
   private static final Log LOG = LogFactory.getLog(UrlController.class);
+
+  @Value("${com.mlkzdh.quicklink.url.config.url.base}")
+  private String baseUrl;
+
   private final UrlService urlService;
 
   @Autowired
@@ -61,7 +66,7 @@ public final class UrlController {
     String key = Base62.fromBase10(savedUrlRecord.getId());
     UrlResponse urlResponse = new UrlResponse.Builder()
         .key(key)
-        .shortUrl(String.format("http://mlkzdh.com/%s", key))
+        .shortUrl(String.format("%s/%s", baseUrl, key))
         .destination(savedUrlRecord.getDestination())
         .build();
     return new ResponseEntity<>(urlResponse, HttpStatus.CREATED);

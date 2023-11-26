@@ -27,7 +27,7 @@ class UrlControllerTest {
   private static final String DESTINATION_URL = "https://www.google.com";
   private static final String KEY = "aaaaab";
   private static final Long ID = 1L;
-  private static final String SHORT_URL = "http://mlkzdh.com/" + KEY;
+  private static final String SHORT_URL = "http://dev.local/u/" + KEY;
   private static final String ENDPOINT = "/api/v1/url";
 
   @Autowired
