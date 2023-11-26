@@ -68,23 +68,18 @@ public final class UrlController {
   }
 
   /**
-   * Looks up the {@link UrlRecord} in the database based on its key
+   * Looks up the {@link UrlRecord} in the database based on its id
    * 
-   * @param key The key associated with the {@link UrlRecord}
+   * @param id The id associated with the {@link UrlRecord}
    * @return The response that contains the {@link UrlRecord}
-   * @throws ResponseStatusException When the key is not present in the request path
+   * @throws ResponseStatusException When the key is not present in the database
    */
-  @GetMapping("/url/{key}")
-  public ResponseEntity<UrlRecord> find(@PathVariable String key) throws ResponseStatusException {
-    // Validation
-    if (StringUtils.isBlank(key)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The URL key is not present.");
-    }
+  @GetMapping(value = "/url/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<UrlRecord> find(@PathVariable Long id) throws ResponseStatusException {
     // Lookup
-    Optional<UrlRecord> urlRecord = urlService.find(Base62.toBase10(key));
+    Optional<UrlRecord> urlRecord = urlService.find(id);
     if (urlRecord.isEmpty()) {
-      LOG.warn(String.format("URL not found: %s", key));
+      LOG.warn(String.format("URL not found: %d", id));
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
     // Response

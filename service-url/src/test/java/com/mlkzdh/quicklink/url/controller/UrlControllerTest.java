@@ -2,8 +2,11 @@ package com.mlkzdh.quicklink.url.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mlkzdh.quicklink.url.controller.model.UrlRequest;
 import com.mlkzdh.quicklink.url.controller.model.UrlResponse;
@@ -86,8 +88,26 @@ class UrlControllerTest {
             .content(objectMapper.writeValueAsString(urlRequest)))
         .andExpect(status().isCreated())
         .andExpect(
-            MockMvcResultMatchers.content()
-                .string(objectMapper.writeValueAsString(urlResponse)));
+            content().string(objectMapper.writeValueAsString(urlResponse)));
+  }
+
+  @Test
+  void find_keyDoesNotExist_returnNotFound() throws Exception {
+    when(urlService.find(ID)).thenReturn(Optional.empty());
+    mockMvc.perform(get(ENDPOINT + "/{id}", String.valueOf(ID))).andExpect(status().isNotFound());
+  }
+
+  @Test
+  void find_returnUrlRecord() throws Exception {
+    UrlRecord urlRecord = new UrlRecord.Builder()
+        .id(ID)
+        .destination(DESTINATION_URL)
+        .build();
+    when(urlService.find(ID)).thenReturn(Optional.of(urlRecord));
+
+    mockMvc.perform(get(ENDPOINT + "/{id}", String.valueOf(ID)))
+        .andExpect(status().isOk())
+        .andExpect(content().string(objectMapper.writeValueAsString(urlRecord)));
   }
 
 }
