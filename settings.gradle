@@ -1,0 +1,5 @@
+rootProject.name = 'QuickLink'
+
+include 'service-discovery'
+include 'service-redirect'
+include 'service-url'

@@ -1,0 +1,5 @@
+# Unnecessary project files
+.gradle
+.vscode
+*/build
+**/.DS_Store

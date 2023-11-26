@@ -1,0 +1,15 @@
+package com.mlkzdh.quicklink.url.service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class UrlServiceTest {
+
+  @Test
+  void dummy() {
+    assertEquals(4, 2 + 2);
+  }
+
+}
