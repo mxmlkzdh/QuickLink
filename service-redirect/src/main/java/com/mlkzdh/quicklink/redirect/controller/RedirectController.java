@@ -62,7 +62,12 @@ public final class RedirectController {
                 .toUri(),
             UrlRecord.class);
     // Persistence
-    HitRecord savedHitRecord = redirectService.save(new HitRecord.Builder().build());
+    HitRecord savedHitRecord = redirectService.save(new HitRecord.Builder()
+        .urlRecordId(urlRecord.getId())
+        .ip(request.getRemoteAddr())
+        .userAgent(request.getHeader(HttpHeaders.USER_AGENT))
+        .referer(request.getHeader(HttpHeaders.REFERER))
+        .build());
     LOG.info(String.format("Hit saved: %s", savedHitRecord));
     // Response
     HttpHeaders headers = new HttpHeaders();
