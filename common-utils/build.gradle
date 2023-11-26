@@ -1,0 +1,18 @@
+plugins {
+	id 'java'
+}
+
+group = 'com.mlkzdh.quicklink'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	testImplementation 'junit:junit:4.13.2'
+}
