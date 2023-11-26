@@ -1,5 +1,6 @@
 package com.mlkzdh.quicklink.url.service;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mlkzdh.quicklink.url.db.model.UrlRecord;
@@ -17,6 +18,10 @@ public final class UrlService {
 
   public UrlRecord save(UrlRecord urlRecord) {
     return urlRepository.save(urlRecord);
+  }
+
+  public Optional<UrlRecord> find(Long id) {
+    return urlRepository.findById(id);
   }
 
 }

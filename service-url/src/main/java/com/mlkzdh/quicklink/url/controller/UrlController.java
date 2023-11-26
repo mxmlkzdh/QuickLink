@@ -1,12 +1,16 @@
 package com.mlkzdh.quicklink.url.controller;
 
+import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +35,7 @@ public final class UrlController {
   }
 
   /**
-   * Stores the destination URL in the database and returns the {@code UrlResponse} that contains
+   * Stores the destination URL in the database and returns the {@link UrlResponse} that contains
    * the short URL.
    * 
    * @param urlRequest The request that contains the destination URL
@@ -62,6 +66,30 @@ public final class UrlController {
         .destination(savedUrlRecord.getDestination())
         .build();
     return new ResponseEntity<>(urlResponse, HttpStatus.CREATED);
+  }
+
+  /**
+   * Looks up the {@link UrlRecord} in the database based on its key
+   * 
+   * @param key The key associated with the {@link UrlRecord}
+   * @return The response that contains the {@link UrlRecord}
+   * @throws ResponseStatusException When the key is not present in the request path
+   */
+  @GetMapping("/url/{key}")
+  public ResponseEntity<UrlRecord> find(@PathVariable String key) throws ResponseStatusException {
+    // Validation
+    if (StringUtils.isBlank(key)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "The URL key is not present.");
+    }
+    // Lookup
+    Optional<UrlRecord> urlRecord = urlService.find(Base62.toBase10(key));
+    if (urlRecord.isEmpty()) {
+      LOG.warn(String.format("URL not found: %s", key));
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+    // Response
+    return new ResponseEntity<>(urlRecord.get(), HttpStatus.OK);
   }
 
 }
