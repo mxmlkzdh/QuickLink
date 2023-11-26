@@ -31,10 +31,13 @@ public final class UrlController {
   }
 
   /**
+   * Stores the destination URL in the database and returns the {@code UrlResponse} that contains
+   * the short URL.
    * 
-   * @param urlRequest
-   * @return
-   * @throws ResponseStatusException
+   * @param urlRequest The request that contains the destination URL
+   * @return The response that contains the short URL
+   * @throws ResponseStatusException When the destination URL is not present in the request or is
+   *         invalid
    */
   @PostMapping(value = "/url", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
