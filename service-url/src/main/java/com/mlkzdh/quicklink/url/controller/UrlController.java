@@ -28,7 +28,7 @@ public final class UrlController {
 
   private static final Log LOG = LogFactory.getLog(UrlController.class);
 
-  @Value("${com.mlkzdh.quicklink.url.config.url.base}")
+  @Value("${com.mlkzdh.quicklink.url.config.shortUrl.base}")
   private String baseUrl;
 
   private final UrlService urlService;
