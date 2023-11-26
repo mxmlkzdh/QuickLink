@@ -27,7 +27,7 @@ public final class RedirectController {
 
   private static final Log LOG = LogFactory.getLog(RedirectController.class);
 
-  @Value("${com.mlkzdh.quicklink.redirect.service.url.endpoint}")
+  @Value("${com.mlkzdh.quicklink.redirect.serviceUrl.endpoint}")
   private String serviceUrlEndpoint;
 
   private final RedirectService redirectService;

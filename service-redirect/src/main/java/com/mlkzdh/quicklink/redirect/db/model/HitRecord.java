@@ -75,8 +75,8 @@ public final class HitRecord {
 
   @Override
   public String toString() {
-    return String.format(Locale.getDefault(), "[id: %d, urlRecordId: %d, timestamp: %s]",
-        id, urlRecordId, timestamp);
+    return String.format(Locale.getDefault(), "[id: %d, urlRecordId: %d, ip: %s, timestamp: %s]",
+        id, urlRecordId, ip, timestamp);
   }
 
   public static class Builder {

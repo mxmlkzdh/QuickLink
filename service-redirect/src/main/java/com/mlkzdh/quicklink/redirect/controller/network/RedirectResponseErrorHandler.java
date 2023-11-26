@@ -6,7 +6,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.server.ResponseStatusException;
 
-public class RedirectResponseErrorHandler implements ResponseErrorHandler {
+public final class RedirectResponseErrorHandler implements ResponseErrorHandler {
 
   @Override
   public boolean hasError(ClientHttpResponse response) throws IOException {
