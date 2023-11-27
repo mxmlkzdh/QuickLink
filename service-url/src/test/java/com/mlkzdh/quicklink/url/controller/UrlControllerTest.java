@@ -49,10 +49,9 @@ class UrlControllerTest {
   void save_destinationIsNull_returnBadRequest() throws Exception {
     UrlRequest urlRequest = new UrlRequest();
 
-    mockMvc.perform(
-        post(ENDPOINT)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(urlRequest)))
+    mockMvc.perform(post(ENDPOINT)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(urlRequest)))
         .andExpect(status().isBadRequest());
   }
 
@@ -60,10 +59,9 @@ class UrlControllerTest {
   void save_destinationIsEmpty_returnBadRequest() throws Exception {
     UrlRequest urlRequest = new UrlRequest("");
 
-    mockMvc.perform(
-        post(ENDPOINT)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(urlRequest)))
+    mockMvc.perform(post(ENDPOINT)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(urlRequest)))
         .andExpect(status().isBadRequest());
   }
 
@@ -81,11 +79,10 @@ class UrlControllerTest {
         .build();
     when(urlService.save(any(UrlRecord.class))).thenReturn(urlRecord);
 
-    mockMvc
-        .perform(post(ENDPOINT)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(urlRequest)))
+    mockMvc.perform(post(ENDPOINT)
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(urlRequest)))
         .andExpect(status().isCreated())
         .andExpect(
             content().string(objectMapper.writeValueAsString(urlResponse)));
