@@ -1,6 +1,7 @@
 package com.mlkzdh.quicklink.redirect.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -33,12 +34,9 @@ class RedirectControllerTest {
   @MockBean
   private RedirectService redirectService;
 
-  @MockBean
-  private RestTemplate restTemplate;
-
   @Test
   void redirect_keyDoesNotExist_returnNotFound() throws Exception {
-    when(restTemplate.getForObject(any(), any()))
+    when(redirectService.findUrlRecord(anyLong()))
         .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     mockMvc.perform(get(ENDPOINT, KEY)).andExpect(status().isNotFound());
@@ -50,7 +48,7 @@ class RedirectControllerTest {
         .id(ID)
         .destination(DESTINATION)
         .build();
-    when(restTemplate.getForObject(any(), any()))
+    when(redirectService.findUrlRecord(anyLong()))
         .thenReturn(urlRecord);
 
     mockMvc.perform(get(ENDPOINT, KEY))
