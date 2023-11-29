@@ -28,6 +28,8 @@ dependencies {
   implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
   runtimeOnly 'com.h2database:h2'
+  runtimeOnly 'org.xerial:sqlite-jdbc:3.44.1.0'
+  runtimeOnly 'org.hibernate.orm:hibernate-community-dialects:6.4.0.Final'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
   implementation project(':common-utils')
