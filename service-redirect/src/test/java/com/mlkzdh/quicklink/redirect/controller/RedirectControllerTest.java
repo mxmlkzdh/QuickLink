@@ -1,6 +1,5 @@
 package com.mlkzdh.quicklink.redirect.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import com.mlkzdh.quicklink.redirect.controller.model.UrlRecord;
 import com.mlkzdh.quicklink.redirect.service.RedirectService;
