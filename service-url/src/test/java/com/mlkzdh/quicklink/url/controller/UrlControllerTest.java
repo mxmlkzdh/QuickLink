@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mlkzdh.quicklink.url.controller.model.UrlRequest;
@@ -20,6 +21,7 @@ import com.mlkzdh.quicklink.url.controller.model.UrlResponse;
 import com.mlkzdh.quicklink.url.db.model.UrlRecord;
 import com.mlkzdh.quicklink.url.service.UrlService;
 
+@ActiveProfiles("dev")
 @AutoConfigureMockMvc
 @SpringBootTest
 class UrlControllerTest {
@@ -27,7 +29,7 @@ class UrlControllerTest {
   private static final String DESTINATION_URL = "https://www.google.com";
   private static final String KEY = "aaaaab";
   private static final Long ID = 1L;
-  private static final String SHORT_URL = "http://dev.local/u/" + KEY;
+  private static final String SHORT_URL = "http://localhost:8765/u/" + KEY;
   private static final String ENDPOINT = "/api/v1/url";
 
   @Autowired
