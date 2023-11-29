@@ -1,4 +1,4 @@
-package com.mlkzdh.quicklink.redirect.controller.network;
+package com.mlkzdh.quicklink.redirect.network;
 
 import java.io.IOException;
 import org.springframework.http.HttpStatus;

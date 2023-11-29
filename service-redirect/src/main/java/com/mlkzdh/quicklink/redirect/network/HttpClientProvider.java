@@ -1,4 +1,4 @@
-package com.mlkzdh.quicklink.redirect.controller.network;
+package com.mlkzdh.quicklink.redirect.network;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
