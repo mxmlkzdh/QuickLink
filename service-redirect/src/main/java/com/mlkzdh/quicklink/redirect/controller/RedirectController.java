@@ -17,7 +17,7 @@ import com.mlkzdh.quicklink.util.Base62;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-public final class RedirectController {
+public class RedirectController {
 
   private final RedirectService redirectService;
 

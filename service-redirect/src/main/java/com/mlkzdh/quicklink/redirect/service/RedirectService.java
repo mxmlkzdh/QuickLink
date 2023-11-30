@@ -53,7 +53,7 @@ public class RedirectService {
   @CanIgnoreReturnValue
   public HitRecord save(HitRecord hitRecord) {
     HitRecord savedHitRecord = hitRepository.save(hitRecord);
-    LOG.info(String.format("Hit saved: %s", savedHitRecord));
+    LOG.info(String.format("HitRecord saved: %s", savedHitRecord));
     return savedHitRecord;
   }
 
