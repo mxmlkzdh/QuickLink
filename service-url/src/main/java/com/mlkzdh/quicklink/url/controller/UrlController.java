@@ -2,8 +2,6 @@ package com.mlkzdh.quicklink.url.controller;
 
 import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,11 +22,9 @@ import com.mlkzdh.quicklink.util.Base62;
 
 @RequestMapping("/api/v1")
 @RestController
-public final class UrlController {
+public class UrlController {
 
-  private static final Log LOG = LogFactory.getLog(UrlController.class);
-
-  @Value("${com.mlkzdh.quicklink.url.config.shortUrl.base}")
+  @Value("${com.mlkzdh.quicklink.url.config.short-url.base}")
   private String baseUrl;
 
   private final UrlService urlService;
@@ -61,7 +57,6 @@ public final class UrlController {
         new UrlRecord.Builder()
             .destination(urlRequest.getDestination())
             .build());
-    LOG.info(String.format("URL saved: %s", savedUrlRecord));
     // Response
     String key = Base62.fromBase10(savedUrlRecord.getId());
     UrlResponse urlResponse = new UrlResponse.Builder()
@@ -84,7 +79,6 @@ public final class UrlController {
     // Lookup
     Optional<UrlRecord> urlRecord = urlService.find(id);
     if (urlRecord.isEmpty()) {
-      LOG.warn(String.format("URL not found: %d", id));
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
     // Response
