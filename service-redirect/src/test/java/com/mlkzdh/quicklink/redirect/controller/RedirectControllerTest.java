@@ -5,15 +5,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
 import com.mlkzdh.quicklink.redirect.controller.model.UrlRecord;
 import com.mlkzdh.quicklink.redirect.service.RedirectService;
 
@@ -35,7 +34,7 @@ class RedirectControllerTest {
   @Test
   void redirect_keyDoesNotExist_returnNotFound() throws Exception {
     when(redirectService.findUrlRecord(anyLong()))
-        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        .thenReturn(Optional.empty());
 
     mockMvc.perform(get(ENDPOINT, KEY)).andExpect(status().isNotFound());
   }
@@ -47,12 +46,10 @@ class RedirectControllerTest {
         .destination(DESTINATION)
         .build();
     when(redirectService.findUrlRecord(anyLong()))
-        .thenReturn(urlRecord);
+        .thenReturn(Optional.of(urlRecord));
 
     mockMvc.perform(get(ENDPOINT, KEY))
         .andExpect(status().isMovedPermanently())
-        .andExpect(header().exists(HttpHeaders.CACHE_CONTROL))
-        .andExpect(header().exists(HttpHeaders.LOCATION))
         .andExpect(header().stringValues(HttpHeaders.CACHE_CONTROL, "no-cache"))
         .andExpect(header().stringValues(HttpHeaders.LOCATION, DESTINATION));
   }

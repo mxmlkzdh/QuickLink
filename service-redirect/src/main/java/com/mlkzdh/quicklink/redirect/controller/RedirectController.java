@@ -1,8 +1,7 @@
 package com.mlkzdh.quicklink.redirect.controller;
 
 import java.net.URI;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public final class RedirectController {
 
-  private static final Log LOG = LogFactory.getLog(RedirectController.class);
   private final RedirectService redirectService;
 
   @Autowired
@@ -42,15 +40,17 @@ public final class RedirectController {
       throws ResponseStatusException {
     // Validation
     // Lookup
-    UrlRecord urlRecord = redirectService.findUrlRecord(Base62.toBase10(key));
+    Optional<UrlRecord> urlRecord = redirectService.findUrlRecord(Base62.toBase10(key));
+    if (urlRecord.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
     // Persistence
-    HitRecord savedHitRecord = redirectService.save(
-        buildHitRecord(urlRecord, request));
-    LOG.info(String.format("Hit saved: %s", savedHitRecord));
+    HitRecord hitRecord = buildHitRecord(urlRecord.get(), request);
+    redirectService.save(hitRecord);
     // Response
     HttpHeaders headers = new HttpHeaders();
     headers.setCacheControl("no-cache");
-    headers.setLocation(URI.create(urlRecord.getDestination()));
+    headers.setLocation(URI.create(urlRecord.get().getDestination()));
     return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
   }
 
