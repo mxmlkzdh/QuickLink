@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.mlkzdh.quicklink.redirect.cache.CacheConfig;
@@ -35,7 +36,7 @@ public class RedirectService {
     this.webClientBuilder = webClientBuilder;
   }
 
-  @Cacheable(CacheConfig.CACHE_URL_RECORDS)
+  @Cacheable(cacheNames = CacheConfig.CACHE_URL_RECORDS, unless = "#result == null")
   public Optional<UrlRecord> findUrlRecord(Long id) {
     return webClientBuilder.build()
         .get()
@@ -45,8 +46,10 @@ public class RedirectService {
             .toUri())
         .accept(MediaType.APPLICATION_JSON)
         .retrieve()
-        .onStatus(code -> code == HttpStatus.NOT_FOUND, e -> Mono.empty())
+        .onStatus(code -> code == HttpStatus.NOT_FOUND,
+            e -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
         .bodyToMono(UrlRecord.class)
+        .onErrorResume(ResponseStatusException.class, e -> Mono.empty())
         .blockOptional();
   }
 
