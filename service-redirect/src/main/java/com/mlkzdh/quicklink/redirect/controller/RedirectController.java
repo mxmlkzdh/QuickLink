@@ -15,6 +15,7 @@ import com.mlkzdh.quicklink.redirect.db.model.HitRecord;
 import com.mlkzdh.quicklink.redirect.service.RedirectService;
 import com.mlkzdh.quicklink.util.Base62;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Pattern;
 
 @RestController
 public class RedirectController {
@@ -36,7 +37,8 @@ public class RedirectController {
    * @throws ResponseStatusException When the key does not exist in the database
    */
   @GetMapping("/u/{key}")
-  public ResponseEntity<Void> redirect(@PathVariable String key, HttpServletRequest request)
+  public ResponseEntity<Void> redirect(
+      @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key, HttpServletRequest request)
       throws ResponseStatusException {
     // Validation
     // Lookup

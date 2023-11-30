@@ -1,7 +1,6 @@
 package com.mlkzdh.quicklink.url.controller;
 
 import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import com.mlkzdh.quicklink.url.controller.model.UrlResponse;
 import com.mlkzdh.quicklink.url.db.model.UrlRecord;
 import com.mlkzdh.quicklink.url.service.UrlService;
 import com.mlkzdh.quicklink.util.Base62;
+import jakarta.validation.Valid;
 
 @RequestMapping("/api/v1")
 @RestController
@@ -45,13 +45,8 @@ public class UrlController {
    */
   @PostMapping(value = "/url", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<UrlResponse> save(@RequestBody UrlRequest urlRequest)
+  public ResponseEntity<UrlResponse> save(@Valid @RequestBody UrlRequest urlRequest)
       throws ResponseStatusException {
-    // Validation
-    if (StringUtils.isBlank(urlRequest.getDestination())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The destination URL is not present.");
-    }
     // Persistence
     UrlRecord savedUrlRecord = urlService.save(
         new UrlRecord.Builder()
