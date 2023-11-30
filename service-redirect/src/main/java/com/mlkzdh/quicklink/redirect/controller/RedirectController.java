@@ -40,7 +40,6 @@ public class RedirectController {
   public ResponseEntity<Void> redirect(
       @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key, HttpServletRequest request)
       throws ResponseStatusException {
-    // Validation
     // Lookup
     Optional<UrlRecord> urlRecord = redirectService.findUrlRecord(Base62.toBase10(key));
     if (urlRecord.isEmpty()) {
