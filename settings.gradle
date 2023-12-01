@@ -1,6 +1,7 @@
 rootProject.name = 'QuickLink'
 
 include 'common-utils'
+include 'service-analytics'
 include 'service-config'
 include 'service-discovery'
 include 'service-redirect'
