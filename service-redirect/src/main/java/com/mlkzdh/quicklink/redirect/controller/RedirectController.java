@@ -31,7 +31,7 @@ public class RedirectController {
    * Looks up the destination URL for the given key, saves the hit record in the database, and
    * redirects to the destination URL
    * 
-   * @param key The key associated wit the destination URL
+   * @param key The key associated with the destination URL
    * @param request The original HTTP request
    * @return The HTTP response that redirects to the destination URL
    * @throws ResponseStatusException When the key does not exist in the database
