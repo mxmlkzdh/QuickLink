@@ -50,7 +50,7 @@ class RedirectControllerTest {
 
     mockMvc.perform(get(ENDPOINT, KEY))
         .andExpect(status().isMovedPermanently())
-        .andExpect(header().stringValues(HttpHeaders.CACHE_CONTROL, "no-cache"))
+        .andExpect(header().stringValues(HttpHeaders.CACHE_CONTROL, "no-cache, no-store"))
         .andExpect(header().stringValues(HttpHeaders.LOCATION, DESTINATION));
   }
 

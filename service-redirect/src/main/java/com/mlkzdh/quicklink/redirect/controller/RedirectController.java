@@ -50,7 +50,7 @@ public class RedirectController {
     redirectService.save(hitRecord);
     // Response
     HttpHeaders headers = new HttpHeaders();
-    headers.setCacheControl("no-cache");
+    headers.setCacheControl("no-cache, no-store");
     headers.setLocation(URI.create(urlRecord.get().getDestination()));
     return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
   }
