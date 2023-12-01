@@ -1,6 +1,6 @@
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /service
 COPY build/libs/*.jar service-url.jar
-ENTRYPOINT ["java","-jar","service-url.jar", "--logging.file.name=url.log", "--spring.profiles.active=prod"]
+ENTRYPOINT ["java","-jar","service-url.jar", "--logging.file.name=url.log"]
 
-EXPOSE 8765
+EXPOSE 9001
