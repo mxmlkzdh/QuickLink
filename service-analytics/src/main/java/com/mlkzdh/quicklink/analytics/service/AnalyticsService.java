@@ -1,8 +1,7 @@
 package com.mlkzdh.quicklink.analytics.service;
 
+import java.util.List;
 import java.util.Optional;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,16 +13,18 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.mlkzdh.quicklink.analytics.cache.CacheConfig;
 import com.mlkzdh.quicklink.analytics.controller.model.HitRecord;
+import com.mlkzdh.quicklink.analytics.controller.model.HitRecordsResponse;
 import com.mlkzdh.quicklink.analytics.controller.model.UrlRecord;
 import reactor.core.publisher.Mono;
 
 @Service
 public class AnalyticsService {
 
-  private static final Log LOG = LogFactory.getLog(AnalyticsService.class);
-
   @Value("${com.mlkzdh.quicklink.analytics.service-url.endpoint}")
   private String serviceUrlEndpoint;
+
+  @Value("${com.mlkzdh.quicklink.analytics.service-redirect.endpoint}")
+  private String serviceRedirectEndpoint;
 
   private final WebClient.Builder webClientBuilder;
 
@@ -33,11 +34,11 @@ public class AnalyticsService {
   }
 
   @Cacheable(cacheNames = CacheConfig.CACHE_URL_RECORDS, unless = "#result == null")
-  public Optional<UrlRecord> fetchUrlRecord(Long id) {
+  public Optional<UrlRecord> findUrlRecord(String key) {
     return webClientBuilder.build()
         .get()
         .uri(UriComponentsBuilder.fromUriString(serviceUrlEndpoint)
-            .path(String.valueOf(id))
+            .path(key)
             .build()
             .toUri())
         .accept(MediaType.APPLICATION_JSON)
@@ -45,13 +46,22 @@ public class AnalyticsService {
         .onStatus(code -> code == HttpStatus.NOT_FOUND,
             e -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
         .bodyToMono(UrlRecord.class)
-        .doOnSuccess(urlRecord -> LOG.info(String.format("UrlRecord fetched: %d", id)))
         .onErrorResume(ResponseStatusException.class, e -> Mono.empty())
         .blockOptional();
   }
 
-  public Optional<HitRecord> fetchHitRecords(Long id) {
-    return Optional.empty();
+  public List<HitRecord> findHitRecords(String key) {
+    return webClientBuilder.build()
+        .get()
+        .uri(UriComponentsBuilder.fromUriString(serviceRedirectEndpoint)
+            .path(key)
+            .build()
+            .toUri())
+        .accept(MediaType.APPLICATION_JSON)
+        .retrieve()
+        .bodyToMono(HitRecordsResponse.class)
+        .map(HitRecordsResponse::getHitRecords)
+        .block();
   }
 
 }
