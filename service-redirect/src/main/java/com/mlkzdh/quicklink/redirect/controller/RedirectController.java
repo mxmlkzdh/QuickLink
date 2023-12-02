@@ -64,7 +64,7 @@ public class RedirectController {
    * @param key The key associated with the destination URL
    * @return The response that contains the list of {@link HitRecord}
    */
-  @GetMapping(value = "/hits/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/api/v1/hits/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<HitRecordsResponse> getHitRecords(
       @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key) {
     // Lookup
