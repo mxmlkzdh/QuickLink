@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.mlkzdh.quicklink.redirect.controller.model.UrlRecord;
 import com.mlkzdh.quicklink.redirect.db.model.HitRecord;
 import com.mlkzdh.quicklink.redirect.service.RedirectService;
-import com.mlkzdh.quicklink.util.Base62;
+import com.mlkzdh.quicklink.util.KeyIdConvertor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Pattern;
 
@@ -41,7 +41,7 @@ public class RedirectController {
       @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key, HttpServletRequest request)
       throws ResponseStatusException {
     // Lookup
-    Optional<UrlRecord> urlRecord = redirectService.findUrlRecord(Base62.toBase10(key));
+    Optional<UrlRecord> urlRecord = redirectService.findUrlRecord(KeyIdConvertor.id(key));
     if (urlRecord.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }

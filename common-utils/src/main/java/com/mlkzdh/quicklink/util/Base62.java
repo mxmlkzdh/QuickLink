@@ -1,6 +1,6 @@
 package com.mlkzdh.quicklink.util;
 
-public final class Base62 {
+final class Base62 {
 
   private static final String ALPHABET =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

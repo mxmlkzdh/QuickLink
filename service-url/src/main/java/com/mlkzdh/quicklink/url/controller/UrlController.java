@@ -17,7 +17,7 @@ import com.mlkzdh.quicklink.url.controller.model.UrlRequest;
 import com.mlkzdh.quicklink.url.controller.model.UrlResponse;
 import com.mlkzdh.quicklink.url.db.model.UrlRecord;
 import com.mlkzdh.quicklink.url.service.UrlService;
-import com.mlkzdh.quicklink.util.Base62;
+import com.mlkzdh.quicklink.util.KeyIdConvertor;
 import jakarta.validation.Valid;
 
 @RequestMapping("/api/v1")
@@ -53,7 +53,7 @@ public class UrlController {
             .destination(urlRequest.getDestination())
             .build());
     // Response
-    String key = Base62.fromBase10(savedUrlRecord.getId());
+    String key = KeyIdConvertor.key(savedUrlRecord.getId());
     UrlResponse urlResponse = new UrlResponse.Builder()
         .key(key)
         .shortUrl(String.format("%s/%s", baseUrl, key))
@@ -65,14 +65,14 @@ public class UrlController {
   /**
    * Looks up the {@link UrlRecord} in the database based on its id
    * 
-   * @param id The id associated with the {@link UrlRecord}
+   * @param key The key associated with the {@link UrlRecord}
    * @return The response that contains the {@link UrlRecord}
    * @throws ResponseStatusException When the key is not present in the database
    */
   @GetMapping(value = "/url/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UrlRecord> find(@PathVariable String key) throws ResponseStatusException {
     // Lookup
-    Optional<UrlRecord> urlRecord = urlService.find(Base62.toBase10(key));
+    Optional<UrlRecord> urlRecord = urlService.find(KeyIdConvertor.id(key));
     if (urlRecord.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
