@@ -1,5 +1,6 @@
 package com.mlkzdh.quicklink.redirect.service;
 
+import java.util.List;
 import java.util.Optional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,11 +38,11 @@ public class RedirectService {
   }
 
   @Cacheable(cacheNames = CacheConfig.CACHE_URL_RECORDS, unless = "#result == null")
-  public Optional<UrlRecord> findUrlRecord(Long id) {
+  public Optional<UrlRecord> findUrlRecord(String key) {
     return webClientBuilder.build()
         .get()
         .uri(UriComponentsBuilder.fromUriString(serviceUrlEndpoint)
-            .path(String.valueOf(id))
+            .path(key)
             .build()
             .toUri())
         .accept(MediaType.APPLICATION_JSON)
@@ -58,6 +59,10 @@ public class RedirectService {
     HitRecord savedHitRecord = hitRepository.save(hitRecord);
     LOG.info(String.format("HitRecord saved: %s", savedHitRecord));
     return savedHitRecord;
+  }
+
+  public Optional<List<HitRecord>> findAllByUrlRecordId(long urlRecordId) {
+    return hitRepository.findAllByUrlRecordId(urlRecordId);
   }
 
 }

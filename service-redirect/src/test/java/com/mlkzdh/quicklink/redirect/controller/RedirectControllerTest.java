@@ -1,6 +1,7 @@
 package com.mlkzdh.quicklink.redirect.controller;
 
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -23,7 +24,7 @@ class RedirectControllerTest {
   private static final String DESTINATION = "https://google.com";
   private static final Long ID = 1L;
   private static final String KEY = "aaaaab";
-  private static final String ENDPOINT = "/u/{key}";
+  private static final String ENDPOINT = "/{key}";
 
   @Autowired
   private MockMvc mockMvc;
@@ -33,7 +34,7 @@ class RedirectControllerTest {
 
   @Test
   void redirect_keyDoesNotExist_returnNotFound() throws Exception {
-    when(redirectService.findUrlRecord(anyLong()))
+    when(redirectService.findUrlRecord(anyString()))
         .thenReturn(Optional.empty());
 
     mockMvc.perform(get(ENDPOINT, KEY)).andExpect(status().isNotFound());
@@ -45,7 +46,7 @@ class RedirectControllerTest {
         .id(ID)
         .destination(DESTINATION)
         .build();
-    when(redirectService.findUrlRecord(anyLong()))
+    when(redirectService.findUrlRecord(anyString()))
         .thenReturn(Optional.of(urlRecord));
 
     mockMvc.perform(get(ENDPOINT, KEY))

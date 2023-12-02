@@ -1,6 +1,7 @@
 package com.mlkzdh.quicklink.redirect.controller;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import com.mlkzdh.quicklink.redirect.controller.model.HitRecordsResponse;
 import com.mlkzdh.quicklink.redirect.controller.model.UrlRecord;
 import com.mlkzdh.quicklink.redirect.db.model.HitRecord;
 import com.mlkzdh.quicklink.redirect.service.RedirectService;
@@ -36,12 +38,12 @@ public class RedirectController {
    * @return The HTTP response that redirects to the destination URL
    * @throws ResponseStatusException When the key does not exist in the database
    */
-  @GetMapping("/u/{key}")
+  @GetMapping("/{key}")
   public ResponseEntity<Void> redirect(
       @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key, HttpServletRequest request)
       throws ResponseStatusException {
     // Lookup
-    Optional<UrlRecord> urlRecord = redirectService.findUrlRecord(KeyIdConvertor.id(key));
+    Optional<UrlRecord> urlRecord = redirectService.findUrlRecord(key);
     if (urlRecord.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
@@ -53,6 +55,25 @@ public class RedirectController {
     headers.setCacheControl("no-cache, no-store");
     headers.setLocation(URI.create(urlRecord.get().getDestination()));
     return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
+  }
+
+  /**
+   * Looks up all the {@link HitRecord} in the database based on the destination URL's key
+   * 
+   * @param key The key associated with the destination URL
+   * @return The response that contains the list of {@link HitRecord}
+   */
+  @GetMapping("/hits/{key}")
+  public ResponseEntity<HitRecordsResponse> getHitRecords(
+      @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key) {
+    // Lookup
+    Optional<List<HitRecord>> hitRecords =
+        redirectService.findAllByUrlRecordId(KeyIdConvertor.id(key));
+    // Response
+    if (hitRecords.isEmpty()) {
+      return new ResponseEntity<>(HitRecordsResponse.empty(), HttpStatus.OK);
+    }
+    return new ResponseEntity<>(new HitRecordsResponse(hitRecords.get()), HttpStatus.OK);
   }
 
   private static HitRecord buildHitRecord(UrlRecord urlRecord,
