@@ -31,8 +31,8 @@ public class RedirectController {
   }
 
   /**
-   * Looks up the destination URL for the given key, saves the hit record in the database, and
-   * redirects to the destination URL
+   * Looks up the destination URL for the given key, saves the {@link HitRecord} in the database,
+   * and redirects to the destination URL.
    * 
    * @param key The key associated with the destination URL
    * @param request The original HTTP request
@@ -59,10 +59,10 @@ public class RedirectController {
   }
 
   /**
-   * Looks up all the {@link HitRecord} in the database based on the destination URL's key
+   * Returns all the {@link HitRecord}s in the database based on their destination URL's key
    * 
    * @param key The key associated with the destination URL
-   * @return The response that contains the list of {@link HitRecord}
+   * @return The response that contains the list of {@link HitRecord}s
    */
   @GetMapping(value = "/api/v1/hits/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<HitRecordsResponse> getHitRecords(

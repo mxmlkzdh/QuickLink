@@ -63,7 +63,7 @@ public class UrlController {
   }
 
   /**
-   * Looks up the {@link UrlRecord} in the database based on its id
+   * Returns the {@link UrlRecord} in the database based on its key.
    * 
    * @param key The key associated with the {@link UrlRecord}
    * @return The response that contains the {@link UrlRecord}

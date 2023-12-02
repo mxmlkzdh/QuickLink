@@ -28,6 +28,13 @@ public class AnalyticsController {
     this.analyticsService = analyticsService;
   }
 
+  /**
+   * Returns the {@link UrlRecord} and its list of {@link HitRecord}s.
+   * 
+   * @param key The key associated with the destination URL
+   * @return The response that contains the {@link AnalyticsResponse} object
+   * @throws ResponseStatusException When the key does not exist in the database
+   */
   @GetMapping(value = "/analytics/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<AnalyticsResponse> analytics(
       @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key)
