@@ -20,10 +20,10 @@ import reactor.core.publisher.Mono;
 @Service
 public class AnalyticsService {
 
-  @Value("${com.mlkzdh.quicklink.analytics.service-url.endpoint}")
+  @Value("${quicklink.analytics.service-url.endpoint}")
   private String serviceUrlEndpoint;
 
-  @Value("${com.mlkzdh.quicklink.analytics.service-redirect.endpoint}")
+  @Value("${quicklink.analytics.service-redirect.endpoint}")
   private String serviceRedirectEndpoint;
 
   private final WebClient.Builder webClientBuilder;

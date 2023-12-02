@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 @RestController
 public class UrlController {
 
-  @Value("${com.mlkzdh.quicklink.url.config.short-url.base}")
+  @Value("${quicklink.url.short-url.base}")
   private String baseUrl;
 
   private final UrlService urlService;
