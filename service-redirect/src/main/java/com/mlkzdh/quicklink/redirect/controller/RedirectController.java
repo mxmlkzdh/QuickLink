@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,7 +64,7 @@ public class RedirectController {
    * @param key The key associated with the destination URL
    * @return The response that contains the list of {@link HitRecord}
    */
-  @GetMapping("/hits/{key}")
+  @GetMapping(value = "/hits/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<HitRecordsResponse> getHitRecords(
       @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key) {
     // Lookup
