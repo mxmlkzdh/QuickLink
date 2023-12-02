@@ -69,10 +69,10 @@ public class UrlController {
    * @return The response that contains the {@link UrlRecord}
    * @throws ResponseStatusException When the key is not present in the database
    */
-  @GetMapping(value = "/url/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<UrlRecord> find(@PathVariable Long id) throws ResponseStatusException {
+  @GetMapping(value = "/url/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<UrlRecord> find(@PathVariable String key) throws ResponseStatusException {
     // Lookup
-    Optional<UrlRecord> urlRecord = urlService.find(id);
+    Optional<UrlRecord> urlRecord = urlService.find(Base62.toBase10(key));
     if (urlRecord.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }

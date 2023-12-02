@@ -93,7 +93,7 @@ class UrlControllerTest {
   @Test
   void find_keyDoesNotExist_returnNotFound() throws Exception {
     when(urlService.find(ID)).thenReturn(Optional.empty());
-    mockMvc.perform(get(ENDPOINT + "/{id}", String.valueOf(ID))).andExpect(status().isNotFound());
+    mockMvc.perform(get(ENDPOINT + "/{key}", KEY)).andExpect(status().isNotFound());
   }
 
   @Test
@@ -104,7 +104,7 @@ class UrlControllerTest {
         .build();
     when(urlService.find(ID)).thenReturn(Optional.of(urlRecord));
 
-    mockMvc.perform(get(ENDPOINT + "/{id}", String.valueOf(ID)))
+    mockMvc.perform(get(ENDPOINT + "/{key}", KEY))
         .andExpect(status().isOk())
         .andExpect(content().string(objectMapper.writeValueAsString(urlRecord)));
   }
