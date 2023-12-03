@@ -45,3 +45,5 @@ jar {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+apply from: "$rootDir/docker.gradle"

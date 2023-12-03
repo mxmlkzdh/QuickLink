@@ -1,0 +1,25 @@
+task buildLatestDockerImage(type: Exec) {
+  description 'Builds the latest Docker image'
+  dependsOn build
+  executable "docker"
+  args "build", "-t", "mxmlkzdh/$project.name", "."
+}
+
+task buildDockerImage(type: Exec) {
+  description 'Builds the Docker image with the current version tag'
+  dependsOn build
+  executable "docker"
+  args "build", "-t", "mxmlkzdh/$project.name:$project.version", "."
+}
+
+task pushLatestDockerImage(type: Exec) {
+  description 'Pushes the latest Docker image'
+  executable "docker"
+  args "push", "mxmlkzdh/$project.name"
+}
+
+task pushDockerImage(type: Exec) {
+  description 'Pushes the Docker image with the current version tag'
+  executable "docker"
+  args "push", "mxmlkzdh/$project.name:$project.version"
+}
