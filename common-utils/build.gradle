@@ -3,10 +3,10 @@ plugins {
 }
 
 group = 'com.mlkzdh.quicklink'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '21'
 }
 
 repositories {
