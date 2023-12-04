@@ -81,7 +81,7 @@ public class RedirectController {
       HttpServletRequest request) {
     return new HitRecord.Builder()
         .urlRecordId(urlRecord.getId())
-        .ip(request.getRemoteAddr())
+        .ip(request.getHeader("X-Real-IP"))
         .userAgent(request.getHeader(HttpHeaders.USER_AGENT))
         .referer(request.getHeader(HttpHeaders.REFERER))
         .build();
