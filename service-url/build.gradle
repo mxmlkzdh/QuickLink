@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'nyc.hazelnut.quicklink'
-version = '1.0.1'
+version = '1.1.0'
 
 java {
 	sourceCompatibility = '21'
