@@ -1,6 +1,5 @@
 package nyc.hazelnut.quicklink.redirect.cache;
 
-import java.util.concurrent.TimeUnit;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -14,11 +13,11 @@ public class CacheConfig {
 
   public static final String CACHE_URL_RECORDS = "cache-url-records";
 
+  private static final int MAXIMUM_SIZE = 100;
+
   @Bean
   public Caffeine<Object, Object> caffeineConfig() {
-    return Caffeine.newBuilder()
-        .expireAfterWrite(10, TimeUnit.MINUTES)
-        .initialCapacity(100);
+    return Caffeine.newBuilder().maximumSize(MAXIMUM_SIZE);
   }
 
   @Bean
