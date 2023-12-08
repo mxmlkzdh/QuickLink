@@ -24,6 +24,7 @@ class RedirectControllerTest {
   private static final String DESTINATION = "https://google.com";
   private static final Long ID = 1L;
   private static final String KEY = "aaaaab";
+  private static final String KEY_INVALID = "aaaab";
   private static final String ENDPOINT = "/r/{key}";
 
   @Autowired
@@ -31,6 +32,11 @@ class RedirectControllerTest {
 
   @MockBean
   private RedirectService redirectService;
+
+  @Test
+  void redirect_keyIsNotValid_returnBadRequest() throws Exception {
+    mockMvc.perform(get(ENDPOINT, KEY_INVALID)).andExpect(status().isBadRequest());
+  }
 
   @Test
   void redirect_keyDoesNotExist_returnNotFound() throws Exception {

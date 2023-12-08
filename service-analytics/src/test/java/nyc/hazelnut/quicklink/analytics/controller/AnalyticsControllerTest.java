@@ -28,6 +28,7 @@ class AnalyticsControllerTest {
   private static final String DESTINATION = "https://google.com";
   private static final Long ID = 1L;
   private static final String KEY = "aaaaab";
+  private static final String KEY_INVALID = "aaaab";
   private static final String ENDPOINT = "/api/v1/analytics/{key}";
 
   @Autowired
@@ -38,6 +39,11 @@ class AnalyticsControllerTest {
 
   @MockBean
   private AnalyticsService analyticsService;
+
+  @Test
+  void analytics_keyIsNotValid_returnBadRequest() throws Exception {
+    mockMvc.perform(get(ENDPOINT, KEY_INVALID)).andExpect(status().isBadRequest());
+  }
 
   @Test
   void analytics_keyDoesNotExist_returnNotFound() throws Exception {

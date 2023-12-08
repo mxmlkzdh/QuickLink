@@ -28,6 +28,7 @@ class UrlControllerTest {
 
   private static final String DESTINATION_URL = "https://www.google.com";
   private static final String KEY = "aaaaab";
+  private static final String KEY_INVALID = "aaaab";
   private static final Long ID = 1L;
   private static final String SHORT_URL = "http://localhost/r/" + KEY;
   private static final String ENDPOINT = "/api/v1/url";
@@ -88,6 +89,11 @@ class UrlControllerTest {
         .andExpect(status().isCreated())
         .andExpect(
             content().string(objectMapper.writeValueAsString(urlResponse)));
+  }
+
+  @Test
+  void find_keyIsNotValid_returnBadRequest() throws Exception {
+    mockMvc.perform(get(ENDPOINT + "/{key}", KEY_INVALID)).andExpect(status().isBadRequest());
   }
 
   @Test
