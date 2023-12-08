@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import nyc.hazelnut.quicklink.url.controller.model.UrlRequest;
 import nyc.hazelnut.quicklink.url.controller.model.UrlResponse;
 import nyc.hazelnut.quicklink.url.db.model.UrlRecord;
 import nyc.hazelnut.quicklink.url.service.UrlService;
 import nyc.hazelnut.quicklink.util.Convertor;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
+import nyc.hazelnut.quicklink.util.ShortUrl;
 
 @RequestMapping("/api/v1")
 @RestController
@@ -54,7 +55,7 @@ public class UrlController {
     String key = Convertor.key(savedUrlRecord.getId());
     UrlResponse urlResponse = new UrlResponse.Builder()
         .key(key)
-        .shortUrl(String.format("%s/%s", baseUrl, key))
+        .shortUrl(ShortUrl.build(baseUrl, "r", key))
         .destination(savedUrlRecord.getDestination())
         .build();
     return new ResponseEntity<>(urlResponse, HttpStatus.CREATED);
