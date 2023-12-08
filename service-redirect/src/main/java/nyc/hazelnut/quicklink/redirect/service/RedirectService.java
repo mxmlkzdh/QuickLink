@@ -50,10 +50,14 @@ public class RedirectService {
         .accept(MediaType.APPLICATION_JSON)
         .retrieve()
         .onStatus(code -> code == HttpStatus.NOT_FOUND,
-            e -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+            e -> {
+              LOG.warn(String.format("UrlRecord does not exist: %s", key));
+              return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND));
+            })
         .bodyToMono(UrlRecord.class)
         .timeout(Duration.ofMillis(HttpClientProvider.TIMEOUT_MILLIS))
         .onErrorResume(TimeoutException.class, e -> {
+          LOG.error("'findUrlRecord' request timed out.", e);
           throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT);
         })
         .block();

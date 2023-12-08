@@ -3,6 +3,8 @@ package nyc.hazelnut.quicklink.analytics.service;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,6 +23,8 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class AnalyticsService {
+
+  private static final Log LOG = LogFactory.getLog(AnalyticsService.class);
 
   @Value("${quicklink.analytics.serviceUrl.endpoint}")
   private String serviceUrlEndpoint;
@@ -46,10 +50,14 @@ public class AnalyticsService {
         .accept(MediaType.APPLICATION_JSON)
         .retrieve()
         .onStatus(code -> code == HttpStatus.NOT_FOUND,
-            e -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+            e -> {
+              LOG.warn(String.format("UrlRecord does not exist: %s", key));
+              return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND));
+            })
         .bodyToMono(UrlRecord.class)
         .timeout(Duration.ofMillis(HttpClientProvider.TIMEOUT_MILLIS))
         .onErrorResume(TimeoutException.class, e -> {
+          LOG.error("'findUrlRecord' request timed out.", e);
           throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT);
         })
         .block();
@@ -68,6 +76,7 @@ public class AnalyticsService {
         .map(HitRecordsResponse::getHitRecords)
         .timeout(Duration.ofMillis(HttpClientProvider.TIMEOUT_MILLIS))
         .onErrorResume(TimeoutException.class, e -> {
+          LOG.error("'findHitRecords' request timed out.", e);
           throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT);
         })
         .block();
