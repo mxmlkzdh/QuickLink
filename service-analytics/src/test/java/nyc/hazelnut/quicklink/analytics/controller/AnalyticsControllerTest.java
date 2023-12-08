@@ -7,13 +7,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nyc.hazelnut.quicklink.analytics.controller.model.AnalyticsResponse;
 import nyc.hazelnut.quicklink.analytics.controller.model.HitRecord;
@@ -41,7 +42,7 @@ class AnalyticsControllerTest {
   @Test
   void analytics_keyDoesNotExist_returnNotFound() throws Exception {
     when(analyticsService.findUrlRecord(anyString()))
-        .thenReturn(Optional.empty());
+        .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     mockMvc.perform(get(ENDPOINT, KEY)).andExpect(status().isNotFound());
   }
@@ -55,7 +56,7 @@ class AnalyticsControllerTest {
     List<HitRecord> hitRecords = new ArrayList<>();
     AnalyticsResponse analyticsResponse = new AnalyticsResponse(urlRecord, hitRecords);
     when(analyticsService.findUrlRecord(anyString()))
-        .thenReturn(Optional.of(urlRecord));
+        .thenReturn(urlRecord);
     when(analyticsService.findHitRecords(anyString()))
         .thenReturn(hitRecords);
 
@@ -74,7 +75,7 @@ class AnalyticsControllerTest {
     hitRecords.add(new HitRecord.Builder().urlRecordId(ID).build());
     AnalyticsResponse analyticsResponse = new AnalyticsResponse(urlRecord, hitRecords);
     when(analyticsService.findUrlRecord(anyString()))
-        .thenReturn(Optional.of(urlRecord));
+        .thenReturn(urlRecord);
     when(analyticsService.findHitRecords(anyString()))
         .thenReturn(hitRecords);
 

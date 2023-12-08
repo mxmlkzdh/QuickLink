@@ -1,7 +1,6 @@
 package nyc.hazelnut.quicklink.analytics.service;
 
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,10 +19,10 @@ import reactor.core.publisher.Mono;
 @Service
 public class AnalyticsService {
 
-  @Value("${quicklink.analytics.service-url.endpoint}")
+  @Value("${quicklink.analytics.serviceUrl.endpoint}")
   private String serviceUrlEndpoint;
 
-  @Value("${quicklink.analytics.service-redirect.endpoint}")
+  @Value("${quicklink.analytics.serviceRedirect.endpoint}")
   private String serviceRedirectEndpoint;
 
   private final WebClient.Builder webClientBuilder;
@@ -34,7 +33,7 @@ public class AnalyticsService {
   }
 
   @Cacheable(cacheNames = CacheConfig.CACHE_URL_RECORDS, unless = "#result == null")
-  public Optional<UrlRecord> findUrlRecord(String key) {
+  public UrlRecord findUrlRecord(String key) throws ResponseStatusException {
     return webClientBuilder.build()
         .get()
         .uri(UriComponentsBuilder.fromUriString(serviceUrlEndpoint)
@@ -46,8 +45,7 @@ public class AnalyticsService {
         .onStatus(code -> code == HttpStatus.NOT_FOUND,
             e -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
         .bodyToMono(UrlRecord.class)
-        .onErrorResume(ResponseStatusException.class, e -> Mono.empty())
-        .blockOptional();
+        .block();
   }
 
   public List<HitRecord> findHitRecords(String key) {
