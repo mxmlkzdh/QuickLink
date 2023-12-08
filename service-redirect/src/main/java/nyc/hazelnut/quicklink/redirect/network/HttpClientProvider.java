@@ -8,6 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class HttpClientProvider {
 
+  public static final long TIMEOUT_MILLIS = 5000;
+
   @LoadBalanced
   @Bean
   public WebClient.Builder restTemplate() {

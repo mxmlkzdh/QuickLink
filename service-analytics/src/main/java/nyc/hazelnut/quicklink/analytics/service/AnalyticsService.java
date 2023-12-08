@@ -1,6 +1,8 @@
 package nyc.hazelnut.quicklink.analytics.service;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,6 +16,7 @@ import nyc.hazelnut.quicklink.analytics.cache.CacheConfig;
 import nyc.hazelnut.quicklink.analytics.controller.model.HitRecord;
 import nyc.hazelnut.quicklink.analytics.controller.model.HitRecordsResponse;
 import nyc.hazelnut.quicklink.analytics.controller.model.UrlRecord;
+import nyc.hazelnut.quicklink.analytics.network.HttpClientProvider;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -45,6 +48,10 @@ public class AnalyticsService {
         .onStatus(code -> code == HttpStatus.NOT_FOUND,
             e -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
         .bodyToMono(UrlRecord.class)
+        .timeout(Duration.ofMillis(HttpClientProvider.TIMEOUT_MILLIS))
+        .onErrorResume(TimeoutException.class, e -> {
+          throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT);
+        })
         .block();
   }
 
@@ -59,6 +66,10 @@ public class AnalyticsService {
         .retrieve()
         .bodyToMono(HitRecordsResponse.class)
         .map(HitRecordsResponse::getHitRecords)
+        .timeout(Duration.ofMillis(HttpClientProvider.TIMEOUT_MILLIS))
+        .onErrorResume(TimeoutException.class, e -> {
+          throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT);
+        })
         .block();
   }
 

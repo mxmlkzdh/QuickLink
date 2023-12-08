@@ -1,7 +1,9 @@
 package nyc.hazelnut.quicklink.redirect.service;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import nyc.hazelnut.quicklink.redirect.cache.CacheConfig;
 import nyc.hazelnut.quicklink.redirect.controller.model.UrlRecord;
 import nyc.hazelnut.quicklink.redirect.db.model.HitRecord;
 import nyc.hazelnut.quicklink.redirect.db.repository.HitRepository;
+import nyc.hazelnut.quicklink.redirect.network.HttpClientProvider;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -49,6 +52,10 @@ public class RedirectService {
         .onStatus(code -> code == HttpStatus.NOT_FOUND,
             e -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
         .bodyToMono(UrlRecord.class)
+        .timeout(Duration.ofMillis(HttpClientProvider.TIMEOUT_MILLIS))
+        .onErrorResume(TimeoutException.class, e -> {
+          throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT);
+        })
         .block();
   }
 
