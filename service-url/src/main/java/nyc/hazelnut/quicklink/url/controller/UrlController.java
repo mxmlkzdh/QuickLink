@@ -17,7 +17,7 @@ import nyc.hazelnut.quicklink.url.controller.model.UrlRequest;
 import nyc.hazelnut.quicklink.url.controller.model.UrlResponse;
 import nyc.hazelnut.quicklink.url.db.model.UrlRecord;
 import nyc.hazelnut.quicklink.url.service.UrlService;
-import nyc.hazelnut.quicklink.util.KeyIdConvertor;
+import nyc.hazelnut.quicklink.util.Convertor;
 import jakarta.validation.Valid;
 
 @RequestMapping("/api/v1")
@@ -40,8 +40,6 @@ public class UrlController {
    * 
    * @param urlRequest The request that contains the destination URL
    * @return The response that contains the short URL
-   * @throws ResponseStatusException When the destination URL is not present in the request or is
-   *         invalid
    */
   @PostMapping(value = "/url", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,7 +51,7 @@ public class UrlController {
             .destination(urlRequest.getDestination())
             .build());
     // Response
-    String key = KeyIdConvertor.key(savedUrlRecord.getId());
+    String key = Convertor.key(savedUrlRecord.getId());
     UrlResponse urlResponse = new UrlResponse.Builder()
         .key(key)
         .shortUrl(String.format("%s/%s", baseUrl, key))
@@ -72,7 +70,7 @@ public class UrlController {
   @GetMapping(value = "/url/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UrlRecord> find(@PathVariable String key) throws ResponseStatusException {
     // Lookup
-    Optional<UrlRecord> urlRecord = urlService.find(KeyIdConvertor.id(key));
+    Optional<UrlRecord> urlRecord = urlService.find(Convertor.id(key));
     if (urlRecord.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }

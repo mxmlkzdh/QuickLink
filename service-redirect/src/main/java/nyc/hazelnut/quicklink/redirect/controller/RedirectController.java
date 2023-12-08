@@ -16,7 +16,7 @@ import nyc.hazelnut.quicklink.redirect.controller.model.HitRecordsResponse;
 import nyc.hazelnut.quicklink.redirect.controller.model.UrlRecord;
 import nyc.hazelnut.quicklink.redirect.db.model.HitRecord;
 import nyc.hazelnut.quicklink.redirect.service.RedirectService;
-import nyc.hazelnut.quicklink.util.KeyIdConvertor;
+import nyc.hazelnut.quicklink.util.Convertor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Pattern;
 
@@ -69,7 +69,7 @@ public class RedirectController {
       @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key) {
     // Lookup
     Optional<List<HitRecord>> hitRecords =
-        redirectService.findAllByUrlRecordId(KeyIdConvertor.id(key));
+        redirectService.findAllByUrlRecordId(Convertor.id(key));
     // Response
     if (hitRecords.isEmpty()) {
       return new ResponseEntity<>(HitRecordsResponse.empty(), HttpStatus.OK);

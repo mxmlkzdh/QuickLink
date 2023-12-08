@@ -1,8 +1,8 @@
 package nyc.hazelnut.quicklink.util;
 
-public final class KeyIdConvertor {
+public final class Convertor {
 
-  private KeyIdConvertor() {}
+  private Convertor() {}
 
   public static String key(long id) {
     return Base62.fromBase10(id);
