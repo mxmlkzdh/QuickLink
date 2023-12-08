@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import nyc.hazelnut.quicklink.redirect.cache.CacheConfig;
 import nyc.hazelnut.quicklink.redirect.controller.model.UrlRecord;
 import nyc.hazelnut.quicklink.redirect.db.model.HitRecord;
@@ -25,7 +24,7 @@ public class RedirectService {
 
   private static final Log LOG = LogFactory.getLog(RedirectService.class);
 
-  @Value("${quicklink.redirect.service-url.endpoint}")
+  @Value("${quicklink.redirect.serviceUrl.endpoint}")
   private String serviceUrlEndpoint;
 
   private final HitRepository hitRepository;
@@ -38,7 +37,7 @@ public class RedirectService {
   }
 
   @Cacheable(cacheNames = CacheConfig.CACHE_URL_RECORDS, unless = "#result == null")
-  public Optional<UrlRecord> findUrlRecord(String key) {
+  public UrlRecord findUrlRecord(String key) throws ResponseStatusException {
     return webClientBuilder.build()
         .get()
         .uri(UriComponentsBuilder.fromUriString(serviceUrlEndpoint)
@@ -50,11 +49,9 @@ public class RedirectService {
         .onStatus(code -> code == HttpStatus.NOT_FOUND,
             e -> Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
         .bodyToMono(UrlRecord.class)
-        .onErrorResume(ResponseStatusException.class, e -> Mono.empty())
-        .blockOptional();
+        .block();
   }
 
-  @CanIgnoreReturnValue
   public HitRecord save(HitRecord hitRecord) {
     HitRecord savedHitRecord = hitRepository.save(hitRecord);
     LOG.info(String.format("HitRecord saved: %s", savedHitRecord));

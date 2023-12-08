@@ -12,17 +12,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Pattern;
 import nyc.hazelnut.quicklink.redirect.controller.model.HitRecordsResponse;
 import nyc.hazelnut.quicklink.redirect.controller.model.UrlRecord;
 import nyc.hazelnut.quicklink.redirect.db.model.HitRecord;
 import nyc.hazelnut.quicklink.redirect.service.RedirectService;
 import nyc.hazelnut.quicklink.util.Convertor;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.Pattern;
 
 @RestController
 public class RedirectController {
 
+  private static final String HEADER_CACHE_CONTROL = "no-cache, no-store";
+  private static final String HEADER_X_REAL_IP = "X-Real-IP";
   private final RedirectService redirectService;
 
   @Autowired
@@ -39,27 +41,24 @@ public class RedirectController {
    * @return The HTTP response that redirects to the destination URL
    * @throws ResponseStatusException When the key does not exist in the database
    */
-  @GetMapping("/{key}")
+  @GetMapping("/r/{key}")
   public ResponseEntity<Void> redirect(
       @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key, HttpServletRequest request)
       throws ResponseStatusException {
-    // Lookup
-    Optional<UrlRecord> urlRecord = redirectService.findUrlRecord(key);
-    if (urlRecord.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
-    // Persistence
-    HitRecord hitRecord = buildHitRecord(urlRecord.get(), request);
+    // Look up
+    UrlRecord urlRecord = redirectService.findUrlRecord(key);
+    // Persist
+    HitRecord hitRecord = buildHitRecord(urlRecord, request);
     redirectService.save(hitRecord);
-    // Response
+    // Respond
     HttpHeaders headers = new HttpHeaders();
-    headers.setCacheControl("no-cache, no-store");
-    headers.setLocation(URI.create(urlRecord.get().getDestination()));
+    headers.setCacheControl(HEADER_CACHE_CONTROL);
+    headers.setLocation(URI.create(urlRecord.getDestination()));
     return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
   }
 
   /**
-   * Returns all the {@link HitRecord}s in the database based on their destination URL's key
+   * Returns all the {@link HitRecord}s in the database based on their destination URL's key.
    * 
    * @param key The key associated with the destination URL
    * @return The response that contains the list of {@link HitRecord}s
@@ -67,10 +66,10 @@ public class RedirectController {
   @GetMapping(value = "/api/v1/hits/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<HitRecordsResponse> getHitRecords(
       @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key) {
-    // Lookup
+    // Look up
     Optional<List<HitRecord>> hitRecords =
         redirectService.findAllByUrlRecordId(Convertor.id(key));
-    // Response
+    // Respond
     if (hitRecords.isEmpty()) {
       return new ResponseEntity<>(HitRecordsResponse.empty(), HttpStatus.OK);
     }
@@ -81,7 +80,7 @@ public class RedirectController {
       HttpServletRequest request) {
     return new HitRecord.Builder()
         .urlRecordId(urlRecord.getId())
-        .ip(request.getHeader("X-Real-IP"))
+        .ip(request.getHeader(HEADER_X_REAL_IP))
         .userAgent(request.getHeader(HttpHeaders.USER_AGENT))
         .referer(request.getHeader(HttpHeaders.REFERER))
         .build();
