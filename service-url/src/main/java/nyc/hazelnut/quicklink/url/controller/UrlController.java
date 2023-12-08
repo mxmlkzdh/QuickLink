@@ -19,12 +19,13 @@ import nyc.hazelnut.quicklink.url.db.model.UrlRecord;
 import nyc.hazelnut.quicklink.url.service.UrlService;
 import nyc.hazelnut.quicklink.util.Convertor;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 
 @RequestMapping("/api/v1")
 @RestController
 public class UrlController {
 
-  @Value("${quicklink.url.short-url.base}")
+  @Value("${quicklink.url.shortUrl.base}")
   private String baseUrl;
 
   private final UrlService urlService;
@@ -43,14 +44,13 @@ public class UrlController {
    */
   @PostMapping(value = "/url", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<UrlResponse> save(@Valid @RequestBody UrlRequest urlRequest)
-      throws ResponseStatusException {
-    // Persistence
+  public ResponseEntity<UrlResponse> save(@Valid @RequestBody UrlRequest urlRequest) {
+    // Persist
     UrlRecord savedUrlRecord = urlService.save(
         new UrlRecord.Builder()
             .destination(urlRequest.getDestination())
             .build());
-    // Response
+    // Respond
     String key = Convertor.key(savedUrlRecord.getId());
     UrlResponse urlResponse = new UrlResponse.Builder()
         .key(key)
@@ -68,13 +68,15 @@ public class UrlController {
    * @throws ResponseStatusException When the key is not present in the database
    */
   @GetMapping(value = "/url/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<UrlRecord> find(@PathVariable String key) throws ResponseStatusException {
-    // Lookup
+  public ResponseEntity<UrlRecord> find(
+      @PathVariable @Pattern(regexp = "^[a-zA-Z0-9]{6}$") String key)
+      throws ResponseStatusException {
+    // Look up
     Optional<UrlRecord> urlRecord = urlService.find(Convertor.id(key));
     if (urlRecord.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
-    // Response
+    // Respond
     return new ResponseEntity<>(urlRecord.get(), HttpStatus.OK);
   }
 

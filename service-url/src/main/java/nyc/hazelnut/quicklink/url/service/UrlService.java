@@ -28,7 +28,7 @@ public class UrlService {
   public Optional<UrlRecord> find(Long id) {
     Optional<UrlRecord> urlRecord = urlRepository.findById(id);
     urlRecord.ifPresentOrElse(url -> LOG.info(String.format("UrlRecord found: %d", id)),
-        () -> LOG.warn(String.format("UrlRecord NOT found: %d", id)));
+        () -> LOG.warn(String.format("UrlRecord does not exist: %d", id)));
     return urlRecord;
   }
 
