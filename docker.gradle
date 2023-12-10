@@ -2,7 +2,7 @@ task buildLatestDockerImage(type: Exec) {
   description 'Builds the latest Docker image'
   dependsOn build
   executable "docker"
-  args "build", "-t", "mxmlkzdh/$project.name", "."
+  args "build", "--platform=linux/amd64", "-t", "mxmlkzdh/$project.name", "."
 }
 
 task buildDockerImage(type: Exec) {
